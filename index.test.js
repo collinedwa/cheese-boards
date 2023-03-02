@@ -94,6 +94,12 @@ describe("db tests", () => {
     })
 
     test("additional eager loading", async () => {
+        userList = await User.findAll({
+            include: {
+                model: Board, as: "boards"
+            }
+        })
+
         cheeseList = await Cheese.findAll({
             include: [
                 {model: Board, as: "boards"}
@@ -102,6 +108,8 @@ describe("db tests", () => {
 
         firstCheeseBoards = cheeseList[0].boards;
         secondCheeseBoards = cheeseList[1].boards;
+        
+        expect(userList[1].boards.length).toBe(2);
 
         expect(firstCheeseBoards.length).toBe(2);
         expect(firstCheeseBoards.length).toEqual(secondCheeseBoards.length);
