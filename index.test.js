@@ -1,6 +1,8 @@
 const db = require("./db");
 const {User, Cheese, Board} = require("./models/index");
 
+// used to store instances and later delete them
+const obj = [];
 
 
 describe("db tests", () => {
@@ -13,6 +15,8 @@ describe("db tests", () => {
             name: "John",
             email: "goober@goob.com"
         });
+
+        obj.push(newUser);
         
         expect(newUser.name).toBe("John");
 
@@ -22,12 +26,16 @@ describe("db tests", () => {
             rating: "2"
         });
 
+        obj.push(newBoard);
+
         expect(newBoard.type).toBe("game");
 
         newCheese = await Cheese.create({
             title: "cheddar",
             description: "classic"
         });
+
+        obj.push(newCheese);
 
         expect(newCheese.title).toBe("cheddar");
 
@@ -41,11 +49,15 @@ describe("db tests", () => {
             rating: "5"
         });
 
+        obj.push(secondBoard);
+
         user = await User.findByPk(1);
         newUser = await User.create({
             name: "Tommy",
             email: "xXtommyXx@tommyworld.com"
         });
+
+        obj.push(newUser);
 
         for(i=1; i<3; i++){
             await user.addBoard(i);
@@ -62,15 +74,19 @@ describe("db tests", () => {
         firstBoard = await Board.findByPk(1);
         secondBoard = await Board.findByPk(2);
 
-        newCheese = await Cheese.create({
+        firstCheese = await Cheese.create({
             title: "american",
             description: "kinda like plastic"
         });
+
+        obj.push(firstCheese);
 
         anothaCheese = await Cheese.create({
             title: "gouda",
             description: "this cheese is so gouda!"
         });
+
+        obj.push(anothaCheese);
 
         for(i=1; i<4; i++){
             await firstBoard.addCheese(i);
@@ -108,10 +124,25 @@ describe("db tests", () => {
 
         firstCheeseBoards = cheeseList[0].boards;
         secondCheeseBoards = cheeseList[1].boards;
-        
+
         expect(userList[1].boards.length).toBe(2);
 
         expect(firstCheeseBoards.length).toBe(2);
         expect(firstCheeseBoards.length).toEqual(secondCheeseBoards.length);
+    })
+
+    test("can delete", async () => {
+
+        for(instance of obj){
+            await instance.destroy();
+        }
+
+        userList = await User.findAll();
+        cheeseList = await Cheese.findAll();
+        boardList = await Board.findAll();
+
+        expect(userList.length).toBe(0);
+        expect(cheeseList.length).toBe(0);
+        expect(boardList.length).toBe(0);
     })
 })
