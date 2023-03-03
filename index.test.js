@@ -131,6 +131,18 @@ describe("db tests", () => {
         expect(firstCheeseBoards.length).toEqual(secondCheeseBoards.length);
     })
 
+    test("can update entry", async () => {
+        firstBoard = await Board.findByPk(1);
+
+        expect(firstBoard.type).toBe("game");
+
+        await firstBoard.update({
+            type: "stinky"
+        });
+
+        expect(firstBoard.type).toBe("stinky");
+    })
+
     test("can delete", async () => {
 
         for(instance of obj){
