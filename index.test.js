@@ -11,6 +11,10 @@ describe("db tests", () => {
     });
 
     test("create", async () => {
+        // I appreciate the continuity from test to test. At the same time,
+        // it is good to separate each test with its own scope and variables. 
+        // Consider creating these items in the beforeAll so that they can be referenced
+        // in the tests (the beforeAll and beforeEach functions allow us to include that file-wide context)
         newUser = await User.create({
             name: "John",
             email: "goober@goob.com"
